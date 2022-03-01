@@ -23,6 +23,7 @@ def  student_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+
             if request.user.groups.filter(name='student').exists():
              return render(request, 'campus/stulog.html', {'form': form})
             else:
@@ -50,13 +51,14 @@ def student_register(request):
         form = Student_SignUpForm(request.POST)
         if form.is_valid():
             user=form.save()
-            group = Group.objects.get(name='student')
+            name=request.POST.get('student')
+            group = Group.objects.filter(name=name).first()
             user.groups.add(group)
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('http://127.0.0.1:8000/student/student_login/')
+            return redirect('http://127.0.0.1:8000/student/student_login')
 
         else:
             return render(request, 'campus/register.html', {'form': form})
@@ -77,7 +79,7 @@ def usd(request):
                 y=request.POST.get('phone_number')
                 db=request.POST.get('dob')
                 e=request.POST.get('email')
-                l=request.POST.get('languages') 
+                l=request.POST.get('languages')
                 cc=request.POST.get('certifications_count')
                 i=request.POST.get('internship')
                 c12=request.POST.get('class_12_percentage')
@@ -120,7 +122,7 @@ def usd(request):
         form=UsdForm()
         db=post[0].dob
         e=post[0].email
-        l=post[0].languages 
+        l=post[0].languages
         cc=post[0].certifications_count
         i=post[0].internship
         c12=post[0].class_12_percentage
@@ -467,4 +469,3 @@ def stumail(request,opt):
 
     else:
         return HttpResponse("<h1>u r not logged in</h1>")
-
