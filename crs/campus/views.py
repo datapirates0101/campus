@@ -157,7 +157,8 @@ def company_register(request):
         form = company_SignUpForm(request.POST)
         if form.is_valid():
             user=form.save()
-            group = Group.objects.get(name='company')
+            name=request.POST.get('company')
+            group = Group.objects.filter(name=name).first()
             user.groups.add(group)
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
